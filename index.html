@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        #videosContainer{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        .videoEntity{
+            width: 300px;
+            height: auto;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            border: 2px solid rgb(139, 134, 134);
+            padding: 16px;
+            border-radius: 16px;
+        }
+        .videoEntity:hover{
+            cursor:pointer;
+        }
+        .videoEntity > img{
+            width: 100%;
+            height: 80%;
+        }
+        .videoEntity > h3{
+            text-align: center;
+            display: inline-block;
+        }
+    </style>
+
+
+
+    <input type="text" name="" placeholder="search a video" id="searchTxt">
+    <input type="button" value="Go" id="searchBtn">
+    <div id="videosContainer">
+        <div class="videoEntity">
+            <img src="https://image.cnbcfm.com/api/v1/image/105992231-1561667465295gettyimages-521697453.jpeg?v=1561667497&w=678&h=381" alt="No doggo">
+            <h3>A doggo</h3>
+        </div>
+    </div>
+
+
+    <script
+        src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+
+        
+    <script>
+
+        var searchTxt_ = $("#searchTxt");
+        var searchBtn_ = $("#searchBtn");
+        var videosContainer_ = $("#videosContainer");
+
+        searchBtn_.click(function(){
+            var txt = searchTxt_.val();
+
+            // key = AIzaSyCFO_5dneUD5lHhmo3RwS563JTR8NNcek8
+            $.ajax({
+                type: "get",
+                url: "https://www.googleapis.com/youtube/v3/search",
+                data: {part: "id, snippet", q: txt, maxResults:10, key: "AIzaSyCFO_5dneUD5lHhmo3RwS563JTR8NNcek8"},
+                dataType: "json",
+                success: function(data){
+                    videosContainer_.html("");
+                    data.items.forEach(vid => {
+                        var idVid = vid.id.videoId;
+                        var title = vid.snippet.title;
+                        var dedoGordo = vid.snippet.thumbnails.high.url;
+
+                        var video = `
+                            <div class="videoEntity" data-id="${idVid}">
+                                <img src="${dedoGordo}" alt="No dedo gordo">
+                                <h3>${title}</h3>
+                            </div>
+                        `;
+
+                        videosContainer_.append(video);
+                    });
+                }
+            });
+        });
+
+        videosContainer_.on("click", ".videoEntity", function(){
+            window.open("https://www.youtube.com/watch?v="+$(this).data("id"));
+        })
+
+    </script>
+</body>
+</html>
